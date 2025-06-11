@@ -3,7 +3,5 @@ export function greet(name: string): string {
 }
 
 export abstract class RateLimiters {
-  function getHttpRateLimier({}) {
-    
-  }
+
 }

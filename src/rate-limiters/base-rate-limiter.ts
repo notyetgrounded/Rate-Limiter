@@ -1,28 +1,14 @@
-import { ILimiter } from "../limiters/Limiter.interface";
+import { RateLimiter } from "./rate-limiter.interface"
 
-export class BaseRateLimiter<ReqType>{
-    constructor(private limiter: ILimiter<ReqType>){
+export abstract class BaseRateLimiter<ReqType,ResType>  implements RateLimiter<ReqType,ResType>{
+    constructor(private nextHandler:(()=>Promise<ResType>) | ((req:ReqType)=>Promise<ResType> ) ) {
+        
     }
 
-    handler<ReturnType>( req: ReqType, nextHandler: (req: ReqType) => ReturnType): ReturnType | void;
-
-    handler<ReturnType>(req: ReqType, nextHandler: () => ReturnType ): ReturnType | void;
-
-    handler<ReturnType>(req:ReqType,nextHandler: (req: ReqType) => ReturnType | (()=> ReturnType)): ReturnType | void  {
-
-        if(this.limiter.isAllowed(req))
-        {
-            try{
-            return (nextHandler as (req: ReqType) => ReturnType)(req)
-            }
-            catch{
-                return (nextHandler as () => ReturnType)()
-            }
-        }
-        throw new RateLimitedError()
+    handle(req:ReqType){
+        if(this.nextHandler.length>0)
+            return (this.nextHandler as ((req:ReqType)=>Promise<ResType> ))(req)
+        return (this.nextHandler as (()=>Promise<ResType>))()
     }
+
 }
-
-export class RateLimitedError extends Error{
-
-} 
