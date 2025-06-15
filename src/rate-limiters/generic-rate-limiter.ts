@@ -1,6 +1,5 @@
-export class GenericRateLimiter<ReqType,ResType> extends BaseRateLimiter<ReqType,ResType>{
+export class GenericRateLimiter<ReqType,ResType> implements RateLimiter<ReqType,ResType>{
     constructor(private nextHandler:(()=>Promise<ResType>) | ((req:ReqType)=>Promise<ResType> ) ,private options:GenericRateLimiterOptions) {
-        super(nextHandler)
     }
 
     handle(req:ReqType){
@@ -9,15 +8,18 @@ export class GenericRateLimiter<ReqType,ResType> extends BaseRateLimiter<ReqType
         if(isAllowed)
         {
             const res = await this.nextHandler(req)
-            
+            let limitKey=key
+            if(this.options.getKeyAtOutPut){
+                limitKey = this.options.getKeyAtOutPut(req,res)
+            }
+            this.options.rateLimitStretegy.onResponse(limitKey)
         }
-
+        throw new LimiterError()
     }
-
 }
 
 export interface GenericRateLimiterOptions<ReqType,ResType>{
     rateLimitStretegy: RatelimitStretegy,
-    getKey: (ReqType)=>string,
-    getKeyAtOutPut: (ReqType,ResType)=>string
+    getKey: (req:ReqType)=>string,
+    getKeyAtOutPut: (req:ReqType,res:ResType)=>string | undefined
 }

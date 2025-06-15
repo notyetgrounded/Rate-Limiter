@@ -1,4 +1,4 @@
-export interface RatelimitStretegy{
-    isAllowed(key:string):promise<boolean>
-    addKey(key:string):Promise<boolean>
+export interface RatelimitStretegy {
+  isAllowed(key: string): promise<boolean>;
+  onResponse(key: string): Promise<boolean>;
 }
