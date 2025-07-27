@@ -1,4 +1,4 @@
-import { LimiterError } from "../error/limiter-error";
+import { LimiterError } from "../errors/limiter-error";
 import { BaseRateLimiter } from "./base-rate-limiter";
 import { RateLimiter } from "./rate-limiter.interface";
 

@@ -1,6 +1,6 @@
 import { describe, it, expect} from 'vitest'
 import { MaxRepeatNumberRateLimiter } from '../../src/rate-limiters/max-repeat-number-rate-limiter'
-import { LimiterError } from '../../src/error/limiter-error'
+import { LimiterError } from '../../src/errors/limiter-error'
 
 
 describe('handle', () => {
